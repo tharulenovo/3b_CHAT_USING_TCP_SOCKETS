@@ -10,32 +10,84 @@ To write a python program for creating Chat using TCP Sockets Links.
 ## PROGRAM
 ## Server:
 ```
+# chat_server.py
+
 import socket
-s=socket.socket()
-s.bind(('localhost',8000))
-s.listen(5)
-c,addr=s.accept()
+
+# Create socket
+server_socket = socket.socket(socket.AF_INET, socket.SOCK_STREAM)
+
+# Bind host and port
+host = '127.0.0.1'
+port = 5000
+
+server_socket.bind((host, port))
+
+# Listen for client
+server_socket.listen(1)
+print("Waiting for client connection ... ")
+
+# Accept connection
+client_socket, addr = server_socket.accept()
+
+print("Connected to:", addr)
+
 while True:
-    ClientMessage=c.recv(1024).decode()
-    print("Client > ",ClientMessage)
-    msg=input("Server > ")
-    c.send(msg.encode())
+    # Receive message from client
+    client_message = client_socket.recv(1024).decode()
+    print("Client:", client_message)
+    # Exit condition
+    if client_message.lower() == "bye":
+        break
+    # Send message to client
+    message = input("Server: ")
+    client_socket.send(message.encode())
+    if message.lower() == "bye":
+        break
+    # Close connection
+    client_socket.close()
+    server_socket.close()
+
 
 ```
 ## Client:
 ```
+# chat_client.py
+
 import socket
-s=socket.socket()
-s.connect(('localhost',8000))
+
+# Create socket
+client_socket = socket.socket(socket.AF_INET, socket.SOCK_STREAM)
+
+# Server details
+host = '127.0.0.1'
+port = 5000
+
+# Connect to server
+client_socket.connect((host, port))
+
+print("Connected to server")
+
 while True:
-    msg=input("Client > ")
-    s.send(msg.encode())
-    print("Server > ",s.recv(1024).decode())
+    # Send message to server
+    message = input("Client: ")
+    client_socket.send(message.encode())
+    if message.lower() == "bye":
+        break
+    # Receive message from server
+    server_message = client_socket.recv(1024).decode()
+    print("Server:", server_message)
+    if server_message.lower() == "bye":
+        break
+    # Close connection
+    client_socket.close()
+
 
 ```
 ## OUPUT
-<img width="1362" height="857" alt="Screenshot 2026-02-14 112503" src="https://github.com/user-attachments/assets/46d0beca-a332-4c8f-830c-9403c7e54007" />
-<img width="1447" height="716" alt="Screenshot 2026-02-14 112516" src="https://github.com/user-attachments/assets/c98f2312-8311-4182-a74b-7b9050ced521" />
+<img width="1362" height="803" alt="Screenshot 2026-11-17 140438" src="https://github.com/user-attachments/assets/f35d69de-dbf1-4fbf-99bf-610c15ce2545" />
+
+<img width="1437" height="637" alt="Screenshot 2026-11-17 140515" src="https://github.com/user-attachments/assets/1472320c-d6d9-44ad-b3da-169f7a79d658" />
 
 ## RESULT
 Thus, the python program for creating Chat using TCP Sockets Links was successfully 
